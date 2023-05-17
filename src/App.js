@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Grommet, grommet } from 'grommet';
-import React, { useState } from "react";
+import React from "react";
 
 import { deepMerge } from 'grommet/utils';
 
@@ -18,10 +18,9 @@ const theme = deepMerge(grommet, {
 });
 
 function App() {
-  const [dark, setDark] = useState(false);
 
   return (
-    <Grommet theme={theme} full themeMode={dark ? 'dark' : 'light'}>
+    <Grommet theme={theme} full>
       <Router>
         <Routes>
           <Route exact path="/register" element={<Register />} />
