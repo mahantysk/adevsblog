@@ -2,6 +2,7 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+[![CircleCI](https://circleci.com/gh/mahantysk/adevsblog.svg?style=svg&circle-token=2729f209dbf108294c783171bb3090563b3300e3)](https://app.circleci.com/pipelines/github/mahantysk/adevsblog)
 ## Available Scripts
 
 In the project directory, you can run:
