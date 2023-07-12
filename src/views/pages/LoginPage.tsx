@@ -10,6 +10,11 @@ import { setAuthenticated, setUser } from "../../core/state/AuthSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RoutesMap } from "../../core/routes/Routes";
+import {
+  registerUser,
+  signInUser,
+  getSignedInUser,
+} from "../../core/firebase/FirebaseAuth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -46,7 +51,20 @@ export default function LoginPage() {
   const handleLastNameChange = (event: any) => {
     setLastName(event.target.value);
   };
-
+  const signInHadler = (event: any) => {
+    event.preventDefault();
+    signInUser(email, password)
+      .then((response) => {
+        console.log(response);
+        let user = getSignedInUser();
+        dispatch(setAuthenticated(true));
+        dispatch(setUser(user));
+        navigate(RoutesMap.Home);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const signupHandler = (event: any) => {
     event.preventDefault();
     console.log(username);
@@ -78,21 +96,24 @@ export default function LoginPage() {
         });
     } else {
       console.log("User not signed in. Proceeding to login: " + email);
+      const userDetails = registerUser(
+        {
+          id: "",
+          username,
+          firstName,
+          lastName,
+          middleName: "",
+          email,
+          role: UserRoles.Viewer,
+        },
+        password
+      );
+
       createUserWithEmailAndPassword(firebaseAuth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(`created user: ${user}`);
-          const id = user.uid;
-          const userDetails: User = {
-            id,
-            firstName,
-            middleName: "",
-            lastName,
-            username,
-            email,
-            role: UserRoles.Viewer,
-          };
-          addUser(userDetails);
+
           dispatch(setUser(userDetails));
           dispatch(setAuthenticated(true));
           console.log("User added to database: " + user);
@@ -113,8 +134,6 @@ export default function LoginPage() {
         <InputField
           labelText="Username"
           placeholder="Username"
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handleUsernameChange}
           value={username}
         />
@@ -122,8 +141,6 @@ export default function LoginPage() {
         <InputField
           labelText="Password"
           placeholder=""
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handlePasswordChange}
           value={password}
           password
@@ -132,8 +149,6 @@ export default function LoginPage() {
         <InputField
           labelText="Confirm Password"
           placeholder=""
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handleConfirmPasswordChange}
           value={confirmPassword}
           password
@@ -142,8 +157,6 @@ export default function LoginPage() {
         <InputField
           labelText="Email"
           placeholder="Email"
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handleEmailChange}
           value={email}
         />
@@ -151,8 +164,6 @@ export default function LoginPage() {
         <InputField
           labelText="First Name"
           placeholder="First Name"
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handleFirstNameChange}
           value={firstName}
         />
@@ -160,11 +171,10 @@ export default function LoginPage() {
         <InputField
           labelText="Last Name"
           placeholder="Last Name"
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handleLastNameChange}
           value={lastName}
         />
+        <Button label="Sign Up with Email" secondary onClick={signupHandler} />
       </>
     );
   };
@@ -175,21 +185,19 @@ export default function LoginPage() {
         <InputField
           labelText="Email"
           placeholder="Email"
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
           onChange={handleEmailChange}
           value={email}
         />
 
         <InputField
           labelText="Password"
-          placeholder=""
-          className="text-xl p-2 border-2 rounded-md border-gray-400 text-gray-700"
-          labelClassName="text-xl p-1 font-bold text-gray-800"
+          placeholder="Password"
           onChange={handlePasswordChange}
           value={password}
           password
         />
+
+        <Button label="Login with Email" primary onClick={signInHadler} />
       </>
     );
   };
@@ -197,26 +205,22 @@ export default function LoginPage() {
   const tabs = [
     {
       id: "0",
-      title: "SignIn",
+      title: "Sign In",
       content: signInForm,
       active: true,
     },
     {
       id: "1",
-      title: "SignUp",
+      title: "Sign Up",
       content: signUpForm(),
       active: false,
     },
   ];
   return (
-    <div className="md:w-full flex flex-col items-center justify-center p-5">
-      <div className="w-2/4 flex flex-col items-center justify-center border-2 border-blue-500 shadow-lg p-6 rounded-lg">
+    <div className="flex flex-col items-center justify-center p-5">
+      <div className="w-3/4 md:w-2/4 lg:w-2/4 xl:w-1/4 flex flex-col items-center justify-center border-2 border-blue-500 shadow-lg p-6 rounded-lg">
         <h1 className="text-3xl font-bold text-gray-500">Come Join Us!</h1>
         <TabGroup tabs={tabs} />
-        <div className="flex">
-          <Button label="Sign Up with Email" primary onClick={signupHandler} />
-          <Button label="Login with Google" secondary />
-        </div>
       </div>
     </div>
   );

@@ -24,19 +24,14 @@ const getUserById = async (user_id: string) => {
 };
 
 const addUser = async (user: User) => {
-  try {
-    await setDoc(doc(usersRef, user.id), {
-      first_name: user.firstName,
-      middle_name: user.middleName,
-      last_name: user.lastName,
-      email: user.email,
-      username: user.username,
-      role: user.role,
-    });
-    console.log(`Written doc.`);
-  } catch (e) {
-    console.error("Error writing document", e);
-  }
+  return await setDoc(doc(usersRef, user.id), {
+    first_name: user.firstName,
+    middle_name: user.middleName,
+    last_name: user.lastName,
+    email: user.email,
+    username: user.username,
+    role: user.role,
+  });
 };
 
 export { getAllUsers, getUserById, addUser };
