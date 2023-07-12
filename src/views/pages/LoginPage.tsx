@@ -3,7 +3,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 import { InputField, TabGroup } from "../../widgets/form";
 import { Button } from "../../widgets/form/Button";
-import { addUser, getUserById } from "../../core/firebase/FireStoreUtil";
+import { getUserById } from "../../core/firebase/FireStoreUtil";
 import UserRoles from "../../core/routes/UserConfig";
 import { User } from "../../core/routes/UserConfig";
 import { setAuthenticated, setUser } from "../../core/state/AuthSlice";
